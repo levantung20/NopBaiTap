@@ -94,23 +94,22 @@ những người thỏa mãn số điểm như sau:
 • ET_English>=18 */
 SELECT *
 FROM Trainee
-WHERE  ET_IQ + ET_Gmath>=20 AND ET_IQ>=8 AND ET_Gmath>=8 AND  ET_English>=18;
+WHERE  (ET_IQ + ET_Gmath)>=20 AND ET_IQ>=8 AND ET_Gmath>=8 AND  ET_English>=18;
 
 /*Question 15: Xóa thực tập sinh có TraineeID = 5*/
 DELETE FROM Trainee
 WHERE TraineeID = 5;
 
 /*Question 16: Xóa thực tập sinh có tổng điểm ET_IQ, ET_Gmath <=15*/
-SET SQL_SAFE_UPDATES = 0;
+
 DELETE FROM Trainee
 WHERE (ET_IQ + ET_Gmath) <= 15;
-SET SQL_SAFE_UPDATES = 1;
+
 
 /*Question 17: Xóa thực tập sinh quá 30 tuổi*/
-SET SQL_SAFE_UPDATES = 0;
 DELETE FROM Trainee
-WHERE (SELECT YEAR(Birth_Date)) + 30 <= YEAR(CURRENT_DATE());
-SET SQL_SAFE_UPDATES = 0;
+WHERE (SELECT YEAR(Birth_Date) FROM Trainee) + 30 <= YEAR(curdate());
+
 
 /*Question 18: Thực tập sinh có TraineeID = 3 được chuyển sang lớp " VTI003". Hãy cập nhật
 thông tin vào database*/

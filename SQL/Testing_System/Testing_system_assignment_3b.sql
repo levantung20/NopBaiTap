@@ -15,15 +15,26 @@ USE testingsystem3;
     WHERE length(FullName) = (
 				SELECT MAX(length(FullName))
                 FROM `Account`);
+                
 
     -- Bai lam cau 5
-	SELECT *
-    FROM `Account`
-    WHERE length(FullName) = (
-							SELECT MAX(length(FullName))
-							FROM `Account`
-                            WHERE DepartmentID = 3) AND DepartmentID = 3;
-	
+	SELECT * FROM `account` WHERE departmentID = 3;
+    SELECT * FROM (SELECT * FROM `account` WHERE departmentID = 3) AS A
+    WHERE length(fullname)= (	SELECT MAX(length(fullname)) 
+								FROM (SELECT * FROM `account` WHERE departmentID = 3) AS A	);
+                                
+	-- cach 2 bai 5
+    WITH cte_dep3 AS (SELECT * FROM `account` WHERE departmentID = 3)
+    SELECT * FROM `cte_dep3`
+    WHERE length(fullname) = (SELECT max(length(fullname)) FROM `cte_dep3`)
+    ORDER BY Fullname ASC;
+    
+    
+    
+    
+    
+    
+    
     -- Bai lam cau 6
     SELECT GroupName 
     FROM `Group`
@@ -73,3 +84,5 @@ USE testingsystem3;
     UPDATE GroupAccount
     SET GroupID = 4
     WHERE AccountID = 5;
+    
+    
