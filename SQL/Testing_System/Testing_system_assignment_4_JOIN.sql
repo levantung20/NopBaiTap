@@ -10,9 +10,9 @@ ORDER BY accountid;
 
 -- Question 2: Viết lệnh để lấy ra thông tin các account được tạo sau ngày 20/12/2010 
 WITH date_1 AS (SELECT accountid, createdate FROM `account` WHERE createdate >= '2010-12-20')
-SELECT DISTINCT a.AccountID, a.Email, a.Username, a.FullName, a.DepartmentID, a.PositionID, b.CreateDate
+SELECT a.AccountID, a.Email, a.Username, a.FullName, a.DepartmentID, a.PositionID, b.CreateDate
 FROM `account` a
-INNER JOIN date_1 b ON a.CreateDate = b.CreateDate;
+INNER JOIN date_1 b ON a.AccountID = b.AccountID;
 
 -- Question 3: Viết lệnh để lấy ra tất cả các developer 
 SELECT a.AccountID AS ID, a.FullName, b.PositionName AS 'Position'
@@ -45,6 +45,7 @@ WITH category_1 AS (	SELECT CategoryID, COUNT(QuestionID) AS so_lan_su_dung_dang
 SELECT cq.CategoryName, c1.so_lan_su_dung_dang_nay
 FROM categoryquestion cq
 JOIN category_1 c1 ON cq.CategoryID = c1.CategoryID;
+
 -- Question 7: Thông kê mỗi Question được sử dụng trong bao nhiêu Exam
 WITH question_1 AS (	SELECT QuestionID, COUNT(ExamID) AS so_lan_duoc_su_dung
 						FROM examquestion
@@ -94,6 +95,7 @@ LEFT JOIN categoryquestion cq ON q.CategoryID= cq.CategoryID
 LEFT JOIN typequestion tq ON q.TypeID = tq.TypeID
 LEFT JOIN `account` acc ON q.CreatorID = acc.AccountID
 LEFT JOIN answer ans ON q.QuestionID = ans.QuestionID;
+
 -- Question 13: Lấy ra số lượng câu hỏi của mỗi loại tự luận hay trắc nghiệm
 WITH type_1 AS ( 	SELECT TypeID, COUNT(QuestionID) AS so_luong_duoc_su_dung
 					FROM question
@@ -126,3 +128,4 @@ SELECT q.QuestionID, q.Content, ans.so_cau_tra_loi
 FROM question q
 LEFT JOIN answer_1 ans ON q.QuestionID =ans.QuestionID
 WHERE ans.so_cau_tra_loi IS NULL ; 
+
