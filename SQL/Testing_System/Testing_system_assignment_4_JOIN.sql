@@ -92,12 +92,12 @@ WHERE p1.countpos = ( SELECT MIN(countpos) FROM position_1 ) ;
 
 
 -- Question 11: Thống kê mỗi phòng ban có bao nhiêu dev, test, scrum master, PM
-WITH position_1 AS (	SELECT PositionID, COUNT(AccountID) AS countacc
-						FROM `account`
-						GROUP BY PositionID	)
-SELECT p.PositionName, p1.countacc AS so_nguoi_dam_nhiem_vi_tri
-FROM `position` p
-JOIN position_1 p1 ON p.PositionID = p1.PositionID;
+SELECT d.DepartmentID, d.DepartmentName, p.PositionName, count(p.positionid) as SL
+FROM `account` a
+INNER JOIN department d ON a.DepartmentID = d.DepartmentID
+INNER JOIN `position` p ON a.PositionID = p.PositionID
+GROUP BY a.DepartmentID , a.PositionID;
+
 
 
 /* Question 12: Lấy thông tin chi tiết của câu hỏi bao gồm: thông tin cơ bản của  
@@ -143,4 +143,5 @@ SELECT q.QuestionID, q.Content, ans.countans AS so_cau_tl
 FROM question q
 LEFT JOIN answer_1 ans ON q.QuestionID =ans.QuestionID
 WHERE ans.countans IS NULL ; 
+
 
