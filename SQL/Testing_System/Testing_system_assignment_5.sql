@@ -28,11 +28,12 @@ WHERE a.AccountID IN (SELECT AccountID
 			 );
 
 -- Question 3: Tạo view có chứa câu hỏi có những content quá dài (content quá 300 từ  được coi là quá dài) và xóa nó đi
+DROP VIEW IF EXISTS overLongContent;
 CREATE VIEW overLongContent AS
-DELETE FROM question
-WHERE QuestionID IN (	SELECT QuestionID
-			FROM question
-			WHERE length(content) > 300	);
+SELECT *
+FROM question
+WHERE length(Content) > 300;
+DELETE FROM overLongContent;
 
 
 -- Question 4: Tạo view có chứa danh sách các phòng ban có nhiều nhân viên nhất
