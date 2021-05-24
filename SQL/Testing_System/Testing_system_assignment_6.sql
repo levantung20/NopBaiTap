@@ -1,7 +1,7 @@
 USE testingsystem3;
 -- tao phong ban cho viec
-	INSERT INTO Department 	(	DepartmentID, 	DepartmentName	)
-	VALUES					(	    13		,		'Waiting'	);
+	INSERT INTO Department 	(	DepartmentID	, 	DepartmentName	)
+	VALUES			(	    13		,	'Waiting'	);
 
 -- Question 1: Tạo store để người dùng nhập vào tên phòng ban và in ra tất cả các account thuộc phòng ban đó
 
@@ -21,17 +21,15 @@ DROP PROCEDURE IF EXISTS getNumberOf_members ;
 DELIMITER $$
 CREATE PROCEDURE getNumberOf_members ()
 	BEGIN
-<<<<<<< HEAD
 		SELECT 		g.GroupName, COUNT(ga.AccountID) AS numberOfMembers
-        FROM 		groupaccount ga
-        JOIN 		`group` g ON ga.GroupID = g.GroupID
-        GROUP BY 	ga.GroupID;
-=======
-		SELECT g.GroupName, COUNT(ga.AccountID) AS numberOfMembers
-       	 	FROM groupaccount ga
-        	JOIN `group` g ON ga.GroupID = g.GroupID
-        	GROUP BY ga.GroupID;
->>>>>>> 2334ab3e131a6002d8dc88a8a253caaca0eec049
+		FROM 		groupaccount ga
+		JOIN 		`group` g ON ga.GroupID = g.GroupID
+		GROUP BY 	ga.GroupID;
+
+		SELECT 		g.GroupName, COUNT(ga.AccountID) AS numberOfMembers
+       	 	FROM 		groupaccount ga
+        	JOIN 		`group` g ON ga.GroupID = g.GroupID
+        	GROUP BY 	ga.GroupID;
 	END $$    
 DELIMITER ;
 
@@ -40,21 +38,21 @@ DROP PROCEDURE IF EXISTS getNumberOf_ques_createdThisMonth ;
 DELIMITER $$
 CREATE PROCEDURE getNumberOf_ques_createdThisMonth ()
 	BEGIN
-<<<<<<< HEAD
+
 		SELECT 		tq.TypeName, count(QuestionID) as NumberOf_ques_createdThisMonth
-        FROM 		question q
-        JOIN 		typequestion tq ON q.TypeID = tq.TypeID
-        WHERE		YEAR(q.CreateDate) = YEAR(curdate()) AND MONTH(q.CreateDate) = MONTH(curdate())
-        GROUP BY 	q.TypeID;
-=======
-		SELECT 	tq.TypeName, count(QuestionID) as NumberOf_ques_createdThisMonth
-       		FROM 	question q
-       		JOIN 	typequestion tq ON q.TypeID = tq.TypeID
-        	WHERE 	in_curMonth = MONTH(q.CreateDate) 
+		FROM 		question q
+		JOIN 		typequestion tq ON q.TypeID = tq.TypeID
+		WHERE		YEAR(q.CreateDate) = YEAR(curdate()) AND MONTH(q.CreateDate) = MONTH(curdate())
+		GROUP BY 	q.TypeID;
+
+		SELECT 		tq.TypeName, count(QuestionID) as NumberOf_ques_createdThisMonth
+       		FROM 		question q
+       		JOIN 		typequestion tq ON q.TypeID = tq.TypeID
+        	WHERE 		in_curMonth = MONTH(q.CreateDate) 
 				AND 	YEAR(q.CreateDate) = YEAR(curdate()) 
 				AND 	in_typeQues = q.TypeID
-        GROUP BY tq.TypeID;
->>>>>>> 2334ab3e131a6002d8dc88a8a253caaca0eec049
+        	GROUP BY tq.TypeID;
+
 	END $$    
 DELIMITER ;
 
@@ -64,58 +62,27 @@ DROP PROCEDURE IF EXISTS getID_typeQues_haveMostQues ;
 DELIMITER $$
 CREATE PROCEDURE getID_typeQues_haveMostQues (OUT out_typeID MEDIUMINT UNSIGNED)
 	BEGIN
-<<<<<<< HEAD
+
 		WITH 	cte_countQues 	AS (	SELECT q.TypeID, COUNT(QuestionID) AS countQues
-										FROM question q
-										JOIN typequestion tq ON q.TypeID = tq.TypeID
-										GROUP BY q.TypeID )
-		SELECT 	tq.TypeID 	INTO out_typeID
-        FROM 	typequestion tq
-        JOIN 	cte_countQues cq ON tq.TypeID = cq.TypeID
-        WHERE 	countQues = (	SELECT MAX(countQues) 
-							FROM cte_countQues );
-	END $$
-=======
-		WITH cte_countQues AS (	SELECT q.TypeID, tq.TypeName, COUNT(QuestionID) AS countQues
-					FROM question q
-					JOIN typequestion tq ON q.TypeID = tq.TypeID
-					GROUP BY q.TypeID )
-		SELECT tq.TypeID
-       		FROM typequestion tq
-        	JOIN cte_countQues cq ON tq.TypeID = cq.TypeID
-        	WHERE countQues = (	SELECT MAX(countQues) 
-					FROM cte_countQues 	);
+						FROM question q
+						JOIN typequestion tq ON q.TypeID = tq.TypeID
+						GROUP BY q.TypeID )
+		SELECT 	tq.TypeID INTO out_typeID
+		FROM 	typequestion tq
+		JOIN 	cte_countQues cq ON tq.TypeID = cq.TypeID
+		WHERE 	countQues = (SELECT MAX(countQues) FROM cte_countQues);
 	END$$
->>>>>>> 2334ab3e131a6002d8dc88a8a253caaca0eec049
 DELIMITER ;
+
 -- Question 5: Sử dụng store ở question 4 để tìm ra tên của type question 
 SET 	@id = 0;
 CALL 	getID_typeQues_haveMostQues (@id);
 SELECT 	@id;
 
-<<<<<<< HEAD
 SELECT 	typeName 
 FROM 	typequestion
 WHERE 	typeID = @id;
  
-=======
-DROP PROCEDURE IF EXISTS getName_typeQues_haveMostQues ;
-DELIMITER $$
-CREATE PROCEDURE getName_typeQues_haveMostQues ()
-	BEGIN
-		WITH cte_countQues AS (	SELECT q.TypeID, tq.TypeName, COUNT(QuestionID) AS countQues
-					FROM question q
-					JOIN typequestion tq ON q.TypeID = tq.TypeID
-					GROUP BY q.TypeID )
-		SELECT tq.TypeName
-        	FROM typequestion tq
-        	JOIN cte_countQues cq ON tq.TypeID = cq.TypeID
-        	WHERE countQues = (	SELECT MAX(countQues) 
-					FROM cte_countQues 	);
-	END$$
-DELIMITER ;
-
->>>>>>> 2334ab3e131a6002d8dc88a8a253caaca0eec049
 /* Question 6: Viết 1 store cho phép người dùng nhập vào 1 chuỗi và trả về group có tên 
 				chứa chuỗi của người dùng nhập vào hoặc trả về user có username chứa 
 				chuỗi của người dùng nhập vào*/
@@ -146,26 +113,16 @@ DELIMITER $$
 CREATE PROCEDURE insertNew_acc (IN in_fullName VARCHAR(50), IN in_email VARCHAR(50))
 	BEGIN
 		DECLARE in_Username 		VARCHAR(50) DEFAULT SUBSTRING_INDEX(in_email,'@',1);
-<<<<<<< HEAD
-        DECLARE in_PositionID 		MEDIUMINT UNSIGNED DEFAULT 1 ;
-        DECLARE in_DepartmentID		MEDIUMINT UNSIGNED DEFAULT 13 ;
-=======
-        	DECLARE in_PositionID 		MEDIUMINT UNSIGNED DEFAULT 1 ;
-        	DECLARE in_DepartmentID		MEDIUMINT UNSIGNED DEFAULT 10 ;
->>>>>>> 2334ab3e131a6002d8dc88a8a253caaca0eec049
-        
+		DECLARE in_PositionID 		MEDIUMINT UNSIGNED DEFAULT 1 ;
+		DECLARE in_DepartmentID		MEDIUMINT UNSIGNED DEFAULT 13 ;
+		
 		INSERT INTO `account` 	( Fullname	, 	Username, 	Email, 		PositionID, 	DepartmentID )
         	VALUES			( in_fullName	,	in_Username,	in_email,	in_positionID,	in_departmentID);
         
-<<<<<<< HEAD
-        SELECT 	*
-        FROM 	`Account`
-        WHERE 	Username = in_Username;
-=======
-       	 	SELECT *
-        	FROM `Account`
-        	WHERE Username = in_Username;
->>>>>>> 2334ab3e131a6002d8dc88a8a253caaca0eec049
+
+		SELECT 	*
+		FROM 	`Account`
+		WHERE 	Username = in_Username;
 	END $$    
 DELIMITER ;
  
@@ -177,23 +134,14 @@ DELIMITER ;
  DELIMITER $$
  CREATE PROCEDURE getQues_mostLongContent (IN in_typeQues ENUM('essay','multiple-choice'))
 	BEGIN
-		WITH cte_length AS ( 	SELECT 	QuestionID, length(content) AS length_content
-<<<<<<< HEAD
-								FROM	question 	)
-        SELECT 	q.QuestionID, q.Content
-        FROM 	question q
-        JOIN 	typequestion tq ON q.TypeID = tq.TypeID
-		WHERE 	tq.TypeName = in_typeQues 
-				AND length(q.Content) = ( 	SELECT MAX(length_content)
-											FROM cte_length	);
-=======
-					FROM	question 					)
-        SELECT q.QuestionID, q.Content
-        FROM question q
-        JOIN typequestion tq ON q.TypeID = tq.TypeID
-	WHERE tq.TypeName = in_typeQues AND length(q.Content) = (SELECT MAX(length_content)
-								 FROM cte_length		);
->>>>>>> 2334ab3e131a6002d8dc88a8a253caaca0eec049
+		WITH cte_length AS (	SELECT QuestionID, length(content) AS length_content
+					FROM	question 	)
+        	
+		SELECT q.QuestionID, q.Content
+		FROM question q
+		JOIN typequestion tq ON q.TypeID = tq.TypeID
+		WHERE tq.TypeName = in_typeQues AND length(q.Content) = (SELECT MAX(length_content) FROM cte_length);
+
     END $$
 DELIMITER ;
 
@@ -203,67 +151,54 @@ DROP PROCEDURE IF EXISTS delExam_byItsID;
 DELIMITER $$
 CREATE PROCEDURE delExam_byItsID (IN in_examID MEDIUMINT UNSIGNED)
 	BEGIN
-<<<<<<< HEAD
-		DELETE FROM exam
-        WHERE 		ExamID = in_examID;
-=======
+
 		DELETE 
         	FROM exam
         	WHERE ExamID = in_examID;
->>>>>>> 2334ab3e131a6002d8dc88a8a253caaca0eec049
-    END $$
+
+   	 END $$
 
 /* Question 10: Tìm ra các exam được tạo từ 3 năm trước và xóa các exam đó đi (sử 
  dụng store ở câu 9 để xóa)
  Sau đó in số lượng record đã remove từ các table liên quan trong khi 
  removing */
  
- SET @x = (	SELECT ExamID
-		FROM exam
-		WHERE year(curdate()) -  year(CreateDate) >= 3 );
+ 	SET @x = 0;	
+ 	SELECT ExamID INTO @x
+	FROM exam
+	WHERE (year(curdate()) -  year(CreateDate)) >= 3;
+ 	SELECT @x;
+ 	CALL delExam_byItsID (@x);
  
- CALL delExam_byItsID (@X);
  ***
 /* Question 11: Viết store cho phép người dùng xóa phòng ban bằng cách người dùng 
  nhập vào tên phòng ban và các account thuộc phòng ban đó sẽ được 
  chuyển về phòng ban default là phòng ban chờ việc */
-<<<<<<< HEAD
-=======
  -- create 'phòng ban chờ việc'
 	INSERT INTO Department 	(	DepartmentID	, 	DepartmentName	)
 	VALUES			(	    13		, 	'Waiting'	);
->>>>>>> 2334ab3e131a6002d8dc88a8a253caaca0eec049
- 
+
  DROP PROCEDURE IF EXISTS delDep_byItsName;
  DELIMITER $$
  CREATE PROCEDURE delDep_byItsName (IN in_depName VARCHAR(50))
  	BEGIN
-	
-<<<<<<< HEAD
-    SET @X2 = (	SELECT	DepartmentID
-=======
-    		SET @X = (	SELECT	DepartmentID
->>>>>>> 2334ab3e131a6002d8dc88a8a253caaca0eec049
-				FROM 	Department
-				WHERE 	DepartmentName = in_depName	);
-   
-   	 	DELETE FROM department
-    		WHERE departmentID = @X;
-    
-<<<<<<< HEAD
-    DELETE FROM department
-	WHERE 		departmentID = @X2;
-    
-    UPDATE		`account`
-    SET 		DepartmentID = 13
-    WHERE 		DepartmentID IS NULL;
- END $$
-=======
-		UPDATE	`account`
-		SET DepartmentID = 13
-		WHERE DepartmentID = @X;
- 	END $$
->>>>>>> 2334ab3e131a6002d8dc88a8a253caaca0eec049
+
+    		SET 	@x2 = 0;	
+		
+		SELECT	DepartmentID INTO @x2
+		FROM 	Department
+		WHERE 	DepartmentName = in_depName;
+		
+		SELECT 	@x2;
+ 
+		DELETE FROM 	department
+		WHERE 		departmentID = @X2;
+		
+		UPDATE		`account`
+		SET 		DepartmentID = 13
+		WHERE 		DepartmentID IS NULL;
+
+
  DELIMITER ;
  
 -- Question 12: Viết store để in ra mỗi tháng có bao nhiêu câu hỏi được tạo trong năm nay
@@ -271,21 +206,12 @@ DROP PROCEDURE IF EXISTS getNumbers_Ques_everyMonth_ThisYear;
 DELIMITER $$
 <<<<<<< HEAD
 CREATE PROCEDURE getNumbers_Ques_everyMonth_ThisYear()
-BEGIN
-	SELECT		MONTH(CreateDate) AS 'Month', COUNT(*) AS question_created
-	FROM 		question
-	WHERE  		YEAR(curDate()) - YEAR(CreateDate) = 0
-    GROUP BY	MONTH(CreateDate);
-END $$
-=======
-CREATE PROCEDURE getNumbers_Ques_everyMonth()
 	BEGIN
-		SELECT MONTH(CreateDate) AS 'Month', COUNT(QuestionID) AS question_created_this_month
-		FROM question
-		WHERE  YEAR(curDate()) - YEAR(CreateDate) = 0
-	    GROUP BY MONTH(CreateDate);
+		SELECT		MONTH(CreateDate) AS 'Month', COUNT(*) AS question_created
+		FROM 		question
+		WHERE  		YEAR(curDate()) - YEAR(CreateDate) = 0
+		GROUP BY	MONTH(CreateDate);
 	END $$
->>>>>>> 2334ab3e131a6002d8dc88a8a253caaca0eec049
 DELIMITER ;
  
 
@@ -297,24 +223,9 @@ DROP PROCEDURE IF EXISTS getNumber_ofQues_last6Months;
 DELIMITER $$
 CREATE PROCEDURE getNumber_ofQues_last6Months()
 	BEGIN
-<<<<<<< HEAD
-		SELECT 		YEAR(CreateDate) AS 'YEAR', MONTHNAME(CreateDate) AS 'MONTH', COUNT(QuestionID) AS ques_created 
-		FROM 		question
-		WHERE 		CreateDate >= DATE_SUB(curDate(), INTERVAL 6 MONTH) AND CreateDate <= CurDate()
-		GROUP BY 	MONTH(CreateDate), YEAR(CreateDate)
-		ORDER BY 	YEAR(CreateDate),  MONTH(CreateDate);
-	END $$
-DELIMITER ;
-
-
-
-DROP PROCEDURE IF EXISTS getNumber_ofQues_last6Months;
-DELIMITER $$
-CREATE PROCEDURE getNumber_ofQues_last6Months()
-	BEGIN
 		DROP TABLE IF EXISTS list_last6Months_fromNow;
-        CREATE TABLE 	list_last6Months_fromNow ( years INT, months VARCHAR(10) );
-        INSERT INTO 	list_last6Months_fromNow (years,months) VALUES 	( YEAR(curDate()), MONTHNAME(curDate()));
+		CREATE TABLE 	list_last6Months_fromNow ( years INT, months VARCHAR(10) );
+		INSERT INTO 	list_last6Months_fromNow (years,months) VALUES 	( YEAR(curDate()), MONTHNAME(curDate()));
 		INSERT INTO 	list_last6Months_fromNow (years,months) VALUES	( YEAR(DATE_SUB(curDate(), INTERVAL 1 MONTH)), MONTHNAME(DATE_SUB(curDate(), INTERVAL 1 MONTH)));
 		INSERT INTO 	list_last6Months_fromNow (years,months) VALUES	( YEAR(DATE_SUB(curDate(), INTERVAL 2 MONTH)), MONTHNAME(DATE_SUB(curDate(), INTERVAL 2 MONTH)));
 		INSERT INTO 	list_last6Months_fromNow (years,months) VALUES	( YEAR(DATE_SUB(curDate(), INTERVAL 3 MONTH)), MONTHNAME(DATE_SUB(curDate(), INTERVAL 3 MONTH)));
@@ -322,26 +233,20 @@ CREATE PROCEDURE getNumber_ofQues_last6Months()
 		INSERT INTO 	list_last6Months_fromNow (years,months) VALUES	( YEAR(DATE_SUB(curDate(), INTERVAL 5 MONTH)), MONTHNAME(DATE_SUB(curDate(), INTERVAL 5 MONTH)));
 		INSERT INTO 	list_last6Months_fromNow (years,months) VALUES	( YEAR(DATE_SUB(curDate(), INTERVAL 6 MONTH)), MONTHNAME(DATE_SUB(curDate(), INTERVAL 6 MONTH)));
         
-        WITH cte_countques AS	(	SELECT 		YEAR(CreateDate) AS 'Years', MONTHNAME(CreateDate) AS 'Months', COUNT(QuestionID) AS ques_created 
-									FROM 		question
-									WHERE 		CreateDate >= DATE_SUB(curDate(), INTERVAL 6 MONTH) AND CreateDate <= CurDate()
-									GROUP BY 	MONTH(CreateDate), YEAR(CreateDate)
-									ORDER BY 	YEAR(CreateDate),  MONTH(CreateDate)	)
+        	WITH cte_countques AS	(	SELECT 		YEAR(CreateDate) AS 'Years', 
+					 			MONTHNAME(CreateDate) AS 'Months', 
+					 			COUNT(QuestionID) AS ques_created 
+						FROM 		question
+						WHERE 		CreateDate >= DATE_SUB(curDate(), INTERVAL 6 MONTH) AND CreateDate <= CurDate()
+						GROUP BY 	MONTH(CreateDate), YEAR(CreateDate)
+						ORDER BY 	YEAR(CreateDate),  MONTH(CreateDate)	)
                         
 		SELECT 		A.years AS 'YEAR', 
-					A.months AS 'MONTH', 
-                    IF(B.ques_created IS NOT NULL, B.ques_created , 'No Question is Created') AS Ques_created
-        FROM 		list_last6Months_fromNow A 
-        LEFT JOIN 	cte_countques B ON A.years = B.years AND A.months = B.months;
-=======
-		WITH cte_countQues AS (	SELECT YEAR(CreateDate) AS 'YEAR', MONTH(CreateDate) AS 'MONTH', COUNT(QuestionID) AS quescreated
-					FROM question
-					WHERE DATE_SUB(curDate(), INTERVAL 6 MONTH) <= CreateDate AND CreateDate <= CurDate()
-					GROUP BY MONTH(CreateDate)
-					ORDER BY YEAR(CreateDate))
-		SELECT SUM(quescreated) AS quesCreatedLast6Month
-		FROM cte_countQues;
->>>>>>> 2334ab3e131a6002d8dc88a8a253caaca0eec049
+				A.months AS 'MONTH', 
+                    		IF(B.ques_created IS NOT NULL, B.ques_created , 'No Question is Created') AS Ques_created
+        	FROM 		list_last6Months_fromNow A 
+        	LEFT JOIN 	cte_countques B ON A.years = B.years AND A.months = B.months;
+
 	END $$
 DELIMITER ;
 
