@@ -28,7 +28,7 @@ CREATE TABLE Employee_Table (
 TRUNCATE TABLE Employee_Table;
 INSERT INTO Employee_Table 	(	Employee_Name	,	Department_Number	)
 VALUES				(	'Đỗ Quang Danh',		1		),
-				(	'Trương Ngọc Thạch',	2			),
+				(	'Trương Ngọc Thạch',		2		),
 				(	'Trần Ðức Kiên',		3		),
                             	(	'Vũ Gia Khánh',			4		),
                             	(	'Cao Nhật Nam',			1		),
