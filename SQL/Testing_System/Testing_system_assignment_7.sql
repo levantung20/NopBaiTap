@@ -8,12 +8,13 @@ BEFORE INSERT ON `Group`
 FOR EACH ROW
     BEGIN
     -- logic
-		IF 	NEW.CreateDate < DATE_SUB(curDate(), INTERVAL 1 YEAR) 
-			THEN
-				SIGNAL SQLSTATE '12345'
-				SET MESSAGE_TEXT = 'YOUR GROUP IS OUT OF DATE';
+	IF 	
+		NEW.CreateDate < DATE_SUB(curDate(), INTERVAL 1 YEAR) 
+		THEN
+			SIGNAL SQLSTATE '12345'
+			SET MESSAGE_TEXT = 'YOUR GROUP IS OUT OF DATE';
 		END IF;
-    END $$
+    	END $$
 DELIMITER ;
 
 /* Question 2: Tạo trigger Không cho phép người dùng thêm bất kỳ user nào vào 
@@ -26,9 +27,9 @@ FOR EACH ROW
 	BEGIN
 	-- logic
 		DECLARE var_depID TINYINT UNSIGNED;
-        SELECT departmentID INTO var_depID FROM department WHERE DepartmentName = 'Sale';
-        IF NEW.DepartmentID = var_depID 
-        THEN
+		SELECT departmentID INTO var_depID FROM department WHERE DepartmentName = 'Sale';
+		IF NEW.DepartmentID = var_depID 
+		THEN
 			SIGNAL SQLSTATE '12345'
 			SET MESSAGE_TEXT = 'Department "Sale" cannot add more user';
 		END IF;
@@ -43,14 +44,14 @@ BEFORE INSERT ON groupaccount
 FOR EACH ROW
 	BEGIN
 		DECLARE check_nb TINYINT UNSIGNED;
-        SELECT COUNT(AccountID) INTO check_nb
-        FROM groupaccount
-        WHERE GroupID = NEW.GroupID
+		SELECT COUNT(AccountID) INTO check_nb
+		FROM groupaccount
+		WHERE GroupID = NEW.GroupID
 		GROUP BY GroupID;
-        
+
 		IF check_nb >= 5 THEN
 			SIGNAL SQLSTATE '12345'
-            SET MESSAGE_TEXT = 'The chosen Group is full. Please join another Group :D';
+		    	SET MESSAGE_TEXT = 'The chosen Group is full. Please join another Group :D';
 		END IF;
         
 	END $$
@@ -64,13 +65,13 @@ BEFORE INSERT ON examquestion
 FOR EACH ROW
 	BEGIN
 		DECLARE check_nb_2 TINYINT UNSIGNED;
-        SELECT COUNT(QuestionID) INTO check_nb_2
-        FROM examquestion 
+        	SELECT COUNT(QuestionID) INTO check_nb_2
+        	FROM examquestion 
 		GROUP BY NEW.ExamID;
         
 		IF check_nb_2 >= 10 THEN
 			SIGNAL SQLSTATE '12345'
-            SET MESSAGE_TEXT = 'Stop adding question. 10 is enough!';
+            		SET MESSAGE_TEXT = 'Stop adding question. 10 is enough!';
 		END IF;
 	END $$
 DELIMITER ;
@@ -86,13 +87,13 @@ BEFORE DELETE ON `account`
 FOR EACH ROW
 	BEGIN
 		DECLARE check_mail VARCHAR(50);
-        SELECT email INTO check_mail
-        FROM `account`
-        WHERE accountID = OLD.accountID;
+		SELECT email INTO check_mail
+		FROM `account`
+		WHERE accountID = OLD.accountID;
         
-        IF check_mail = 'admin@gmail.com' THEN
+        	IF check_mail = 'admin@gmail.com' THEN
 			SIGNAL SQLSTATE '12345'
-            SET MESSAGE_TEXT = 'This is account of Admin. Stop doing stupid thing!';
+            		SET MESSAGE_TEXT = 'This is account of Admin. Stop doing stupid thing!';
 		END IF;
 
 	END $$
@@ -107,7 +108,8 @@ CREATE TRIGGER question6
 BEFORE INSERT ON `account`
 FOR EACH ROW
 	BEGIN
-        IF 	NEW.DepartmentID IS NULL THEN
+        	IF 	NEW.DepartmentID IS NULL 
+		THEN
 			SET NEW.DepartmentID = 13;
 		END IF;
 	END $$
@@ -122,13 +124,13 @@ BEFORE INSERT ON examquestion
 FOR EACH ROW
 	BEGIN
 		-- create variable
-        DECLARE var_answers TINYINT UNSIGNED;
-        DECLARE var_Correctanswers TINYINT UNSIGNED;
-		
-        SELECT 		COUNT(A.AnswerID) INTO var_answers
+		DECLARE var_answers TINYINT UNSIGNED;
+		DECLARE var_Correctanswers TINYINT UNSIGNED;
+
+		SELECT 	COUNT(A.AnswerID) INTO var_answers
 		FROM 		examquestion	EQ
 		LEFT JOIN 	answer 			A 	ON A.QuestionID = EQ.QuestionID
-        WHERE 		ExamID = NEW.ExamID
+		WHERE 		ExamID = NEW.ExamID
 		GROUP BY 	EQ.ExamID, EQ.QuestionID;
 
 		SELECT 		COUNT(A.isCorrect) INTO var_Correctanswers
@@ -136,15 +138,17 @@ FOR EACH ROW
 		LEFT JOIN 	answer  	A 	ON A.QuestionID = EQ.QuestionID
 		WHERE 		ExamID = NEW.ExamID AND A.isCorrect = 1 
 		GROUP BY 	EQ.ExamID, EQ.QuestionID;
-        -- logic
-        IF var_answers > 4 THEN 
+		-- logic
+		IF var_answers > 4 
+		THEN 
 			SIGNAL SQLSTATE '12345'
-            SET MESSAGE_TEXT = 'Every question have only four answers in maximum';
+		   	 SET MESSAGE_TEXT = 'Every question have only four answers in maximum';
 		END IF;
 		-- logic 2
-        IF var_Correctanswers > 2 THEN 
+		IF var_Correctanswers > 2 
+		THEN 
 			SIGNAL SQLSTATE '12345'
-            SET MESSAGE_TEXT = 'Every question have only two correct answers in maximum';
+		   	SET MESSAGE_TEXT = 'Every question have only two correct answers in maximum';
 		END IF;
 	END $$
 DELIMITER ;
@@ -161,16 +165,16 @@ DELIMITER ;
  FOR EACH ROW
 	BEGIN
 		IF NEW.gender = 'nam' THEN
-        SET NEW.gender = 'M';
-        END IF;
-    
+		SET NEW.gender = 'M';
+		END IF;
+
 		IF NEW.gender = 'nu' THEN
-        SET NEW.gender = 'F';
-        END IF;
-        
-        IF NEW.gender = 'chưa xác định' OR NEW.gender IS NULL THEN
-        SET NEW.gender = 'U';
-        END IF;
+		SET NEW.gender = 'F';
+		END IF;
+
+		IF NEW.gender = 'chưa xác định' OR NEW.gender IS NULL THEN
+		SET NEW.gender = 'U';
+		END IF;
     END $$
 DELIMITER ;
  
@@ -182,12 +186,12 @@ BEFORE DELETE ON `question`
 FOR EACH ROW
 	BEGIN
 		IF
-			YEAR(NEW.CreateDate) 	= YEAR(curdate()) 	AND
-            MONTH(NEW.CreateDate) 	= MONTH(curdate()) 	AND
-            DAY(curdate()) - DAY(NEW.CreateDate) <= 2
+		YEAR(NEW.CreateDate) 	= YEAR(curdate()) 	AND
+            	MONTH(NEW.CreateDate) 	= MONTH(curdate()) 	AND
+           	DAY(curdate()) - DAY(NEW.CreateDate) <= 2
 		THEN
 			SIGNAL SQLSTATE '12345'
-            SET MESSAGE_TEXT = 'You can only delete questions after creating 2 days';
+            		SET MESSAGE_TEXT = 'You can only delete questions after creating 2 days';
 		END IF;
     END $$
 DELIMITER ;
@@ -201,15 +205,16 @@ DELIMITER ;
 	BEGIN
 		DECLARE countExam TINYINT UNSIGNED;
         
-        SELECT Q.*, COUNT(ExamID) INTO countExam
+        	SELECT Q.*, COUNT(ExamID) INTO countExam
 		FROM `question`			Q
 		LEFT JOIN examquestion	EQ ON Q.QuestionID = EQ.QuestionID
 		WHERE QuestionID = OLD.QuestionID
-        GROUP BY Q.QuestionID;
+        	GROUP BY Q.QuestionID;
         
-        IF countExam > 0 THEN
+       		IF countExam > 0 
+		THEN
 			SIGNAL SQLSTATE '12345'
-            SET MESSAGE_TEXT = 'You can only update question that is not in any question';
+            		SET MESSAGE_TEXT = 'You can only update question that is not in any question';
 		END IF;
 	END $$
  DELIMITER ;
@@ -232,11 +237,11 @@ FROM Exam;
 Nếu số lượng user trong group <= 20 và > 5 thì sẽ có giá trị là normal
 Nếu số lượng user trong group > 20 thì sẽ có giá trị là higher */
 SELECT G.GroupName, count(GA.AccountID) AS so_tv,
-CASE
-    WHEN count(GA.AccountID) <= 5 THEN 'few'
-	WHEN count(GA.AccountID) > 20 THEN 'higher'
-    ELSE 'normal'
-END AS the_number_user_amount
+	CASE
+	    	WHEN count(GA.AccountID) <= 5 THEN 'few'
+		WHEN count(GA.AccountID) > 20 THEN 'higher'
+	    	ELSE 'normal'
+	END AS the_number_user_amount
 FROM groupaccount	GA
 JOIN `group`		G 	ON 	GA.GroupID = G.GroupID
 GROUP BY GA.GroupID;
