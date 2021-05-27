@@ -43,10 +43,10 @@ CREATE TRIGGER question3
 BEFORE INSERT ON groupaccount
 FOR EACH ROW
 	BEGIN
-		DECLARE check_nb TINYINT UNSIGNED;
-		SELECT COUNT(AccountID) INTO check_nb
-		FROM groupaccount
-		WHERE GroupID = NEW.GroupID
+		DECLARE  check_nb TINYINT UNSIGNED;
+		SELECT 	 COUNT(AccountID) INTO check_nb
+		FROM 	 groupaccount
+		WHERE 	 GroupID = NEW.GroupID
 		GROUP BY GroupID;
 
 		IF check_nb >= 5 THEN
@@ -64,9 +64,9 @@ CREATE TRIGGER question4
 BEFORE INSERT ON examquestion
 FOR EACH ROW
 	BEGIN
-		DECLARE check_nb_2 TINYINT UNSIGNED;
-        	SELECT COUNT(QuestionID) INTO check_nb_2
-        	FROM examquestion 
+		DECLARE  check_nb_2 TINYINT UNSIGNED;
+        	SELECT 	 COUNT(QuestionID) INTO check_nb_2
+        	FROM 	 examquestion 
 		GROUP BY NEW.ExamID;
         
 		IF check_nb_2 >= 10 THEN
@@ -87,9 +87,9 @@ BEFORE DELETE ON `account`
 FOR EACH ROW
 	BEGIN
 		DECLARE check_mail VARCHAR(50);
-		SELECT email INTO check_mail
-		FROM `account`
-		WHERE accountID = OLD.accountID;
+		SELECT 	email INTO check_mail
+		FROM 	`account`
+		WHERE 	accountID = OLD.accountID;
         
         	IF check_mail = 'admin@gmail.com' THEN
 			SIGNAL SQLSTATE '12345'
@@ -127,17 +127,17 @@ FOR EACH ROW
 		DECLARE var_answers TINYINT UNSIGNED;
 		DECLARE var_Correctanswers TINYINT UNSIGNED;
 
-		SELECT 	COUNT(A.AnswerID) INTO var_answers
-		FROM 		examquestion	EQ
-		LEFT JOIN 	answer 			A 	ON A.QuestionID = EQ.QuestionID
-		WHERE 		ExamID = NEW.ExamID
-		GROUP BY 	EQ.ExamID, EQ.QuestionID;
+		SELECT 	  COUNT(A.AnswerID) INTO var_answers
+		FROM 	  examquestion	EQ
+		LEFT JOIN answer 	A 	ON A.QuestionID = EQ.QuestionID
+		WHERE 	  ExamID = NEW.ExamID
+		GROUP BY  EQ.ExamID, EQ.QuestionID;
 
-		SELECT 		COUNT(A.isCorrect) INTO var_Correctanswers
-		FROM 		examquestion EQ
-		LEFT JOIN 	answer  	A 	ON A.QuestionID = EQ.QuestionID
-		WHERE 		ExamID = NEW.ExamID AND A.isCorrect = 1 
-		GROUP BY 	EQ.ExamID, EQ.QuestionID;
+		SELECT 	  COUNT(A.isCorrect) INTO var_Correctanswers
+		FROM 	  examquestion EQ
+		LEFT JOIN answer  	A     	ON A.QuestionID = EQ.QuestionID
+		WHERE 	  ExamID = NEW.ExamID AND A.isCorrect = 1 
+		GROUP BY  EQ.ExamID, EQ.QuestionID;
 		-- logic
 		IF var_answers > 4 
 		THEN 
@@ -164,15 +164,15 @@ DELIMITER ;
  AFTER INSERT ON `account`
  FOR EACH ROW
 	BEGIN
-		IF NEW.gender = 'nam' THEN
+		IF  NEW.gender = 'nam' THEN
 		SET NEW.gender = 'M';
 		END IF;
 
-		IF NEW.gender = 'nu' THEN
+		IF  NEW.gender = 'nu' THEN
 		SET NEW.gender = 'F';
 		END IF;
 
-		IF NEW.gender = 'chưa xác định' OR NEW.gender IS NULL THEN
+		IF  NEW.gender = 'chưa xác định' OR NEW.gender IS NULL THEN
 		SET NEW.gender = 'U';
 		END IF;
     END $$
@@ -205,11 +205,11 @@ DELIMITER ;
 	BEGIN
 		DECLARE countExam TINYINT UNSIGNED;
         
-        	SELECT Q.*, COUNT(ExamID) INTO countExam
-		FROM `question`			Q
+        	SELECT    COUNT(ExamID) INTO countExam
+		FROM      `question`	Q
 		LEFT JOIN examquestion	EQ ON Q.QuestionID = EQ.QuestionID
-		WHERE QuestionID = OLD.QuestionID
-        	GROUP BY Q.QuestionID;
+		WHERE 	  QuestionID = OLD.QuestionID
+        	GROUP BY  Q.QuestionID;
         
        		IF countExam > 0 
 		THEN
