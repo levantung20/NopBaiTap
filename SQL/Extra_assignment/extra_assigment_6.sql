@@ -116,8 +116,8 @@ CREATE PROCEDURE remove_oldProject(OUT out_employeeID INT UNSIGNED, OUT out_modu
 		SELECT M.EmployeeID, CONCAT(E.EmployeeFirstName,' ',E.EmployeeLastName) AS Fullname
 		FROM Project_Modules 		M
 		LEFT JOIN Employee		E  ON M.EmployeeID = E.EmployeeID
-		WHERE M.EmployeeID = check_employeeID AND EXISTS (  SELECT *
-															FROM Project_Modules 
-															WHERE ModuleID = check_moduleID AND EmployeeID != check_employeeID );
+		WHERE M.EmployeeID = check_employeeID AND EXISTS (  	SELECT *
+									FROM Project_Modules 
+									WHERE ModuleID = check_moduleID AND EmployeeID != check_employeeID );
 	END $$
 DELIMITER ;
