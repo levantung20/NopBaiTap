@@ -4,41 +4,41 @@ USE newProject;
 
 DROP TABLE IF EXISTS Project_Modules;
 CREATE TABLE Project_Modules(
-	ModuleID 					SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    ProjectID					SMALLINT UNSIGNED REFERENCES Project(ProjectID) ,
-    EmployeeID					INT UNSIGNED DEFAULT NULL REFERENCES Employee(EmployeeID),
-    ProjectModulesDate 			DATE DEFAULT NULl,
-    ProjectModulesCompledOn 	DATE DEFAULT NULl,
-    ProjectModulesDescription 	VARCHAR(250)
+	ModuleID 			SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	ProjectID			SMALLINT UNSIGNED REFERENCES Project(ProjectID) ,
+	EmployeeID			INT UNSIGNED DEFAULT NULL REFERENCES Employee(EmployeeID),
+	ProjectModulesDate 		DATE DEFAULT NULl,
+	ProjectModulesCompledOn 	DATE DEFAULT NULl,
+	ProjectModulesDescription 	VARCHAR(250)
 );
 
 DROP TABLE IF EXISTS Projects;
 CREATE TABLE Projects(
-	ProjectID			SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    ManagerID			INT UNSIGNED DEFAULT NULL REFERENCES Employee(EmployeeID),
-	ProjectName			VARCHAR(50),
-    ProjectStartDate 	DATE DEFAULT NULL,
-    ProjectDescription	VARCHAR(50),
+	ProjectID		SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	ManagerID		INT UNSIGNED DEFAULT NULL REFERENCES Employee(EmployeeID),
+	ProjectName		VARCHAR(50),
+	ProjectStartDate 	DATE DEFAULT NULL,
+	ProjectDescription	VARCHAR(50),
 	ProjectDetails		VARCHAR(250),
-    ProjectCompletedOn	DATE DEFAULT NULL
+	ProjectCompletedOn	DATE DEFAULT NULL
 );
 
 DROP TABLE IF EXISTS Employee;
 CREATE TABLE Employee(
-	EmployeeID 				INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    EmployeeLastName		VARCHAR(50),
-    EmployeeFirstName		VARCHAR(50),
-    EmployeeHireDate		DATE,
-    EmployeeStatus			VARCHAR(50),
-	SupervisorID			INT UNSIGNED DEFAULT NULL REFERENCES Employee(EmployeeID),
+	EmployeeID 		INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    	EmployeeLastName	VARCHAR(50),
+	EmployeeFirstName	VARCHAR(50),
+    	EmployeeHireDate	DATE,
+   	EmployeeStatus		VARCHAR(50),
+	SupervisorID		INT UNSIGNED DEFAULT NULL REFERENCES Employee(EmployeeID),
 	SocialSecurityNumber 	CHAR(12)
 );
 
 DROP TABLE IF EXISTS Work_done;
 CREATE TABLE Work_done(
-	WorkDoneID				INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-	EmployeeID				INT UNSIGNED REFERENCES Employee(EmployeeID),
-	ModuleID				SMALLINT UNSIGNED REFERENCES Project_Modules(ModuleID),
+	WorkDoneID			INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	EmployeeID			INT UNSIGNED REFERENCES Employee(EmployeeID),
+	ModuleID			SMALLINT UNSIGNED REFERENCES Project_Modules(ModuleID),
 	WorkDoneDate			DATE DEFAULT NULL,
 	WorkDoneDescription		VARCHAR(250),
     WorkDoneStatus			VARCHAR(50)
@@ -56,12 +56,12 @@ CREATE PROCEDURE remove_oldProject()
 		SELECT WorkdoneID AS 'Works has been deleted'
 		FROM  Work_done
 		WHERE ModuleID IN	(	SELECT ModuleID
-								FROM Project_Modules PM
-								LEFT JOIN	Projects P		ON PM.ProjectID = P.ProjectID
-								WHERE P.ProjectCompletedOn < DATE_SUB(curdate(), INTERVAL 3 MONTH) );
+						FROM Project_Modules PM
+						LEFT JOIN	Projects P		ON PM.ProjectID = P.ProjectID
+						WHERE P.ProjectCompletedOn < DATE_SUB(curdate(), INTERVAL 3 MONTH) );
 		SELECT ModuleID AS  'Modules has been deleted'
 		FROM Project_Modules PM
-		LEFT JOIN	Projects P		ON PM.ProjectID = P.ProjectID
+		LEFT JOIN Projects   P	ON PM.ProjectID = P.ProjectID
 		WHERE P.ProjectCompletedOn < DATE_SUB(curdate(), INTERVAL 3 MONTH);
 		
 		SELECT ProjectID, ProjectName AS 'Projects has been deleted'
@@ -70,20 +70,20 @@ CREATE PROCEDURE remove_oldProject()
 		
 		-- xoa records
 		DELETE FROM Projects
-		WHERE ProjectID IN ( SELECT ProjectID
-							 FROM Projects
-							 WHERE ProjectCompletedOn < DATE_SUB(curdate(), INTERVAL 3 MONTH) );
+		WHERE ProjectID IN ( 	SELECT ProjectID
+					FROM Projects
+					WHERE ProjectCompletedOn < DATE_SUB(curdate(), INTERVAL 3 MONTH) );
 		
 		DELETE FROM Project_Modules
 		WHERE ModuleID IN ( 	SELECT ModuleID
-								FROM Project_Modules PM
-								LEFT JOIN	Projects P		ON PM.ProjectID = P.ProjectID
-								WHERE P.ProjectCompletedOn < DATE_SUB(curdate(), INTERVAL 3 MONTH) );
+					FROM Project_Modules 		PM
+					LEFT JOIN	Projects 	P	ON PM.ProjectID = P.ProjectID
+					WHERE P.ProjectCompletedOn < DATE_SUB(curdate(), INTERVAL 3 MONTH) );
 		DELETE FROM Work_done
-		WHERE ModuleID	IN	(	SELECT ModuleID
-								FROM Project_Modules PM
-								LEFT JOIN	Projects P		ON PM.ProjectID = P.ProjectID
-								WHERE P.ProjectCompletedOn < DATE_SUB(curdate(), INTERVAL 3 MONTH) );
+		WHERE ModuleID	IN (	SELECT ModuleID
+					FROM Project_Modules 	PM
+					LEFT JOIN Projects 	P	ON PM.ProjectID = P.ProjectID
+					WHERE P.ProjectCompletedOn < DATE_SUB(curdate(), INTERVAL 3 MONTH) );
 	END $$
 DELIMITER ;
 -- Viết stored procedure (có parameter) để in ra các module đang được thực hiện)
@@ -92,7 +92,7 @@ DELIMITER $$
 CREATE PROCEDURE modules_inAction()
 	BEGIN
 		SELECT *
-        FROM Project_Modules
+        	FROM Project_Modules
 		WHERE ProjectModulesDate IS NOT NULL AND ProjectModulesCompledOn != curDate();
 	END $$
 DELIMITER ;
@@ -105,17 +105,17 @@ DELIMITER $$
 CREATE PROCEDURE remove_oldProject(OUT out_employeeID INT UNSIGNED, OUT out_moduleID SMALLINT UNSIGNED)
 	BEGIN
 		DECLARE check_employeeID INT UNSIGNED;
-        DECLARE check_moduleID SMALLINT UNSIGNED;		
+        	DECLARE check_moduleID SMALLINT UNSIGNED;		
 		
-        SELECT EmployeeID INTO check_employeeID
-        FROM Work_done;
-        
-        SELECT ModuleID INTO check_moduleID
-        FROM Work_done;
+		SELECT EmployeeID INTO check_employeeID
+		FROM Work_done;
+
+		SELECT ModuleID INTO check_moduleID
+		FROM Work_done;
         
 		SELECT M.EmployeeID, CONCAT(E.EmployeeFirstName,' ',E.EmployeeLastName) AS Fullname
 		FROM Project_Modules 		M
-		LEFT JOIN Employee			E  ON M.EmployeeID = E.EmployeeID
+		LEFT JOIN Employee		E  ON M.EmployeeID = E.EmployeeID
 		WHERE M.EmployeeID = check_employeeID AND EXISTS (  SELECT *
 															FROM Project_Modules 
 															WHERE ModuleID = check_moduleID AND EmployeeID != check_employeeID );
