@@ -1,6 +1,7 @@
 package vti.com.railway12;
 
 public class Program {
+<<<<<<< HEAD
 	public static void main (String[] args) {
 		// create departments
 		Department department1 = new Department();
@@ -222,4 +223,12 @@ public class Program {
 			System.out.println(group2.accounts[i].fullname);
 		}
 	}
+=======
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
+	}
+
+>>>>>>> 0b5702ebab7e01f333c9e60f1e8b0360aebffbb4
 }
